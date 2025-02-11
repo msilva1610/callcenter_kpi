@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard de Produtividade - Call Center</title>
+
+  <!-- Vue.js via CDN -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+  <!-- Chart.js via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      background-color: #1e1e2f; /* Cor de fundo escura */
+      color: #ffffff; /* Cor do texto */
+      font-family: Arial, sans-serif; /* Fonte padrão */
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+    }
+
+    .dashboard {
+      max-width: 1200px;
+      margin: auto;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+
+    .card {
+      background-color: #2a2a40; /* Fundo do card */
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Sombra sutil */
+    }
+
+    .card h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .charts {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    canvas {
+      background-color: #ffffff;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .charts {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="app" class="dashboard">
+    <h1>Dashboard de Produtividade - Call Center 📞</h1>
+
+    <!-- Cards Resumo -->
+    <div class="cards">
+      <div v-for="(metric, index) in metrics" :key="index" class="card">
+        <h2>{{ metric.title }}</h2>
+        <p>{{ metric.value }}</p>
+      </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="charts">
+      <div>
+        <h3>Chamadas Recebidas vs. Atendidas</h3>
+        <canvas id="barChart"></canvas>
+      </div>
+      <div>
+        <h3>Taxa de Abandono e Tempo Médio de Atendimento</h3>
+        <canvas id="lineChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp } = Vue;
+
+    createApp({
+      data() {
+        return {
+          metrics: [
+            { title: "Chamadas Recebidas", value: 1200 },
+            { title: "Chamadas Atendidas", value: 950 },
+            { title: "Chamadas Abandonadas", value: 250 },
+            { title: "Tempo Médio de Atendimento", value: "3m 45s" }
+          ],
+          barChart: null,
+          lineChart: null
+        };
+      },
+      mounted() {
+        this.renderBarChart();
+        this.renderLineChart();
+      },
+      methods: {
+        renderBarChart() {
+          const ctx = document.getElementById("barChart").getContext("2d");
+          this.barChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+              labels: ["Seg", "Ter", "Qua", "Qui", "Sex"],
+              datasets: [
+                {
+                  label: "Recebidas",
+                  data: [200, 250, 230, 260, 280],
+                  backgroundColor: "rgba(54, 162, 235, 0.7)"
+                },
+                {
+                  label: "Atendidas",
+                  data: [180, 220, 210, 240, 250],
+                  backgroundColor: "rgba(75, 192, 192, 0.7)"
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        },
+        renderLineChart() {
+          const ctx = document.getElementById("lineChart").getContext("2d");
+          this.lineChart = new Chart(ctx, {
+            type: "line",
+            data: {
+              labels: ["Seg", "Ter", "Qua", "Qui", "Sex"],
+              datasets: [
+                {
+                  label: "Taxa de Abandono (%)",
+                  data: [10, 12, 9, 11, 13],
+                  borderColor: "red",
+                  backgroundColor: "rgba(255, 99, 132, 0.5)",
+                  fill: false
+                },
+                {
+                  label: "Tempo Médio de Atendimento (min)",
+                  data: [3.5, 3.8, 3.7, 3.6, 3.9],
+                  borderColor: "yellow",
+                  backgroundColor: "rgba(255, 206, 86, 0.5)",
+                  fill: false
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              scales: {
+                y: {
+                  beginAtZero: true
+                }
+              }
+            }
+          });
+        }
+      }
+    }).mount("#app");
+  </script>
+</body>
+</html>
